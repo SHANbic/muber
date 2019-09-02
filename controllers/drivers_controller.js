@@ -4,6 +4,16 @@ module.exports = {
   greeting(req, res) {
     res.send({ hi: 'there' });
   },
+
+  index(req, res, next) {
+    const { lng, lat } = req.query;
+
+    Driver.geoNear(
+      { type: 'Point', coordinates: [lng, lat] },
+      { spherical: true, maxDistance: 200000 }
+    );
+  },
+
   create(req, res, next) {
     const driverProps = req.body;
     Driver.create(driverProps)
@@ -23,7 +33,7 @@ module.exports = {
 
   delete(req, res, next) {
     const driverId = req.params.id;
-    
+
     Driver.findByIdAndRemove(driverId)
       .then(driver => res.status(204).send(driver))
       .catch(next);
